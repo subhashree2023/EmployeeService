@@ -1,0 +1,28 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+.vs/
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+**/packages/
+
+*/.nuget.targets
+*.user
+*.suo
+.vs/
+.vscode/
+
+
+# DNX
+**/project.lock.json
+project.fragment.lock.json
+artifacts/
