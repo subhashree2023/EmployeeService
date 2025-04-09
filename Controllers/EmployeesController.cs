@@ -24,6 +24,26 @@ namespace EmployeeService.Controllers
             }
         }
 
+        /* if put return type as employee like this public Employee Get(int id){},and if we do get request for ant id that is not available in db then we will get body as null and statuscode as 200(ok).
+         * But according to standards of REST,when item is not found then status code should be 404-not found.
+         * To achieve this, Add HttpResponseMessage as return type and do like below.
+         */
+        public HttpResponseMessage Get(int id)
+        {
+            using (EmployeeDBEntities entities = new EmployeeDBEntities())
+            {
+                var entity= entities.Employees.FirstOrDefault(e => e.ID == id);
+                if(entity != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, entity);
+                }
+                else
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Employee with Id=" + id.ToString() + " not found.");
+                }
+            }
+        }
+
         /*If return void on Post method then we will get 204-no content as output
         * but we should have 201-created successfully msg with uri to new content*/
         public HttpResponseMessage Post([FromBody] Employee employee) //Data of Employee come from request body ,so [FromBody]
@@ -47,6 +67,8 @@ namespace EmployeeService.Controllers
             }
 
         }
+
+        
 
     }
 }
