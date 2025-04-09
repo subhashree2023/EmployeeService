@@ -16,7 +16,12 @@ namespace EmployeeService.Controllers
     public class EmployeesController : ApiController
     {
         // GET api/employess
-        public IEnumerable<Employee> Get()
+        /*Can put any name Prefixed with Get(case insensitive, can be get),then it will map with HttpGet verb
+         * Http verb Get mapped to -Get() or like GetEmployee() or getEmployees()
+         * or We can set any method name(without get prefix) then decorate that method with Httpverb attribute
+         */
+        [HttpGet]
+        public IEnumerable<Employee> LoadEmployees()        
         {
             using (EmployeeDBEntities entities=new EmployeeDBEntities())
             {
@@ -28,7 +33,7 @@ namespace EmployeeService.Controllers
          * But according to standards of REST,when item is not found then status code should be 404-not found.
          * To achieve this, Add HttpResponseMessage as return type and do like below.
          */
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage GetEmployee(int id)
         {
             using (EmployeeDBEntities entities = new EmployeeDBEntities())
             {
@@ -94,7 +99,34 @@ namespace EmployeeService.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
            
-        }        
+        }
+
+        public HttpResponseMessage Put(int id)
+        {
+            try
+            {
+                using (EmployeeDBEntities entities = new EmployeeDBEntities())
+                {
+                    //do check for existance of that id first
+                    var entity = entities.Employees.FirstOrDefault(e => e.ID == id);
+                    if (entity == null)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Employee with Id=" + id.ToString() + " not found to update.");
+                    }
+                    else
+                    {
+                        entities.Employees.Remove(entity);
+                        entities.SaveChanges();
+                        return Request.CreateResponse(HttpStatusCode.OK);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+
+        }
 
     }
 }
