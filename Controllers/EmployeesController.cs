@@ -23,5 +23,30 @@ namespace EmployeeService.Controllers
                 return entities.Employees.ToList();
             }
         }
+
+        /*If return void on Post method then we will get 204-no content as output
+        * but we should have 201-created successfully msg with uri to new content*/
+        public HttpResponseMessage Post([FromBody] Employee employee) //Data of Employee come from request body ,so [FromBody]
+        {
+            try
+            {
+                using (EmployeeDBEntities entities = new EmployeeDBEntities())
+                {
+                    entities.Employees.Add(employee);
+                    entities.SaveChanges();
+                    //we need created status and employee object that we added to db.Httpstatuscode is an Enum,created is 201.
+                    var message = Request.CreateResponse(HttpStatusCode.Created, employee);
+                    //uri of newly created item
+                    message.Headers.Location = new Uri(Request.RequestUri + employee.ID.ToString());
+                    return message;
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+
+        }
+
     }
 }
