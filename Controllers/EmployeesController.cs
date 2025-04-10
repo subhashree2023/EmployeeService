@@ -21,11 +21,33 @@ namespace EmployeeService.Controllers
          * or We can set any method name(without get prefix) then decorate that method with Httpverb attribute
          */
         [HttpGet]
-        public IEnumerable<Employee> LoadEmployees()        
+        public HttpResponseMessage LoadEmployees(string gender="All")        
         {
             using (EmployeeDBEntities entities=new EmployeeDBEntities())
             {
-                return entities.Employees.ToList();
+                switch (gender!=null?gender.ToLower():"all")
+                {
+                    case "all":                
+                    return Request.CreateResponse(HttpStatusCode.OK, entities.Employees.ToList());
+                    case "male":
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.Employees.Where(e => e.Gender.ToLower() =="male").ToList());
+                    case "female":
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.Employees.Where(e => e.Gender.ToLower() == "female").ToList());
+                    default:
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, gender + " is invalid.Gender must be All,Male or Female.");                
+            }
+                
+                //    if(gender.ToLower()=="all")
+                //    { 
+                //       return Request.CreateResponse(HttpStatusCode.OK, entities.Employees.ToList());
+                //    }else if(gender.ToLower() == "male" || gender.ToLower() == "female")
+                //    {
+                //        return Request.CreateResponse(HttpStatusCode.OK, entities.Employees.Where(e=>e.Gender.ToLower()==gender.ToLower()).ToList());
+                //    }
+                //    else {
+                //        return Request.CreateResponse(HttpStatusCode.BadRequest, gender + " is invalid.Gender must be All,Male or Female.");
+                //    }
+
             }
         }
 
